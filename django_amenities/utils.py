@@ -11,8 +11,10 @@ from .models import Amenity
 
 BASIC_TAGS = (
     'name', 'addr:country', 'addr:street', 'addr:housenumber',
-    'addr:postcode', 'addr:city', 'amenity', 'shop'
+    'addr:postcode', 'addr:city', 'amenity', 'shop', 'tourism'
 )
+NEEDLES = {'amenity', 'shop', 'tourism'}
+
 NUM_START = re.compile('^\d+')
 
 
@@ -53,7 +55,8 @@ def get_data_for_node(elem, version=0):
         x.attrib['k']: x.attrib['v']
         for x in elem.xpath('./tag')
     }
-    if 'amenity' not in data and 'shop' not in data:
+    keys = set(data.keys())
+    if not keys.intersection(NEEDLES):
         return
 
     attrs = elem.attrib
@@ -67,6 +70,9 @@ def get_data_for_node(elem, version=0):
     }
     if 'shop' in basic:
         basic['amenity'] = basic.pop('shop')
+    if 'tourism' in basic:
+        basic['amenity'] = basic.pop('tourism')
+
     if 'housenumber' in basic:
         if (basic['housenumber'] and
                 not NUM_START.search(basic['housenumber'])):
