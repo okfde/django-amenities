@@ -1,6 +1,6 @@
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.postgres.fields import JSONField
+from django.contrib.postgres.fields import ArrayField, JSONField
 
 
 class Amenity(models.Model):
@@ -11,6 +11,10 @@ class Amenity(models.Model):
     geo = models.PointField(
         null=True, blank=True,
         geography=True, spatial_index=True
+    )
+    topics = ArrayField(
+        models.CharField(max_length=200),
+        default=list, blank=True
     )
 
     country = models.CharField(max_length=2, blank=False)
