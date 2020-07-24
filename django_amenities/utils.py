@@ -11,14 +11,14 @@ from .models import Amenity
 
 BASIC_TAGS = (
     'name', 'addr:country', 'addr:street', 'addr:housenumber',
-    'addr:postcode', 'addr:city', 'amenity', 'shop', 'tourism'
+    'addr:postcode', 'addr:city',
 )
-NEEDLES = {'amenity', 'shop', 'tourism'}
 
-NUM_START = re.compile('^\d+')
+NUM_START = re.compile(r'^\d+')
 
 
-def get_amenities(filename, version=0, osm_ids=None, start=0):
+def get_amenities(filename, version=0, osm_ids=None, topics=None,
+                  category_func=None, start=0,):
     with open(filename, 'rb') as f:
         context = etree.iterparse(f, events=("start",), tag='node')
         for action, elem in islice(context, start, None):
@@ -27,7 +27,10 @@ def get_amenities(filename, version=0, osm_ids=None, start=0):
                 if int(elem.attrib['id']) not in osm_ids:
                     continue
 
-            basic = get_data_for_node(elem, version=version)
+            basic = get_data_for_node(
+                elem, version=version, topics=topics,
+                category_func=category_func
+            )
             if basic is None:
                 continue
             yield basic
@@ -50,14 +53,27 @@ def get_osm_ids(filename, timestamp=None):
             yield int(elem.attrib['id'])
 
 
-def get_data_for_node(elem, version=0):
+def get_topics(basic, topics):
+    return [
+        topic
+        for topic, tags in topics.items()
+        if node_has_tags(basic, tags)
+    ]
+
+
+def node_has_tags(basic, tags):
+    for k, v in tags:
+        if k in basic:
+            if basic[k] == v or v == "*":
+                return True
+    return False
+
+
+def get_data_for_node(elem, version=0, topics=None, category_func=None):
     data = {
         x.attrib['k']: x.attrib['v']
         for x in elem.xpath('./tag')
     }
-    keys = set(data.keys())
-    if not keys.intersection(NEEDLES):
-        return
 
     attrs = elem.attrib
     last_update = datetime.strptime(
@@ -68,10 +84,11 @@ def get_data_for_node(elem, version=0):
         k.replace('addr:', ''): v for k, v in data.items()
         if k in BASIC_TAGS
     }
-    if 'shop' in basic:
-        basic['amenity'] = basic.pop('shop')
-    if 'tourism' in basic:
-        basic['amenity'] = basic.pop('tourism')
+
+    if category_func:
+        basic['category'] = category_func(data)
+    if topics:
+        basic['topics'] = get_topics(data, topics)
 
     if 'housenumber' in basic:
         if (basic['housenumber'] and
