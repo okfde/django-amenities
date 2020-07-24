@@ -5,7 +5,7 @@ from django.contrib.postgres.fields import ArrayField, JSONField
 
 class Amenity(models.Model):
     osm_id = models.BigIntegerField()
-    name = models.CharField(max_length=1000)
+    name = models.CharField(max_length=1000, blank=True)
     last_update = models.DateTimeField(null=True, blank=True)
 
     geo = models.PointField(
@@ -22,7 +22,7 @@ class Amenity(models.Model):
     housenumber = models.CharField(max_length=10, blank=True)
     postcode = models.CharField(max_length=20, blank=True)
     city = models.CharField(max_length=255, blank=True)
-    amenity = models.CharField(max_length=255, blank=True)
+    category = models.CharField(max_length=255, blank=True)
     version = models.IntegerField(default=0)
 
     tags = JSONField(blank=True, default=dict)
