@@ -1,7 +1,6 @@
 # Django Amenities
 
-A Django app that stores OSM amenities,
-" shops and tourism nodes for=querying".
+A Django app that stores OSM amenities, shops and tourism nodes for querying.
 
 
 ## Django settings
