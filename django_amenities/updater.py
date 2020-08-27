@@ -13,7 +13,7 @@ def chunks(l, n):
     return (l[i:i+n] for i in range(0, len(l), n))
 
 
-CATEGORY_KEYS = ['anenity', 'shop', 'tourism', 'government']
+CATEGORY_KEYS = ['amenity', 'shop', 'tourism', 'government']
 
 
 def basic_category_func(basic):
