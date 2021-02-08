@@ -1,6 +1,6 @@
 from django.contrib.gis.db import models
 from django.utils.translation import gettext_lazy as _
-from django.contrib.postgres.fields import ArrayField, JSONField
+from django.contrib.postgres.fields import ArrayField
 
 
 class Amenity(models.Model):
@@ -25,7 +25,7 @@ class Amenity(models.Model):
     category = models.CharField(max_length=255, blank=True)
     version = models.IntegerField(default=0)
 
-    tags = JSONField(blank=True, default=dict)
+    tags = models.JSONField(blank=True, default=dict)
 
     class Meta:
         verbose_name = _('amenity')
