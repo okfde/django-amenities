@@ -35,7 +35,7 @@ setup(
     author_email='mail@stefanwehrmeyer.com',
     packages=find_packages(),
     install_requires=[
-        'django',
+        'django>=3.1',
         'lxml',
         'geocoder',
         'geopy',
