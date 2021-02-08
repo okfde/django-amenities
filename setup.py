@@ -30,7 +30,7 @@ setup(
     url='https://github.com/okfde/django-amenities',
     license='MIT',
     description="App that provides amenities API",
-    long_description=read('README.md'),
+    long_description="Django app that stores OpenStreetMap objects for local querying",
     author='Stefan Wehrmeyer',
     author_email='mail@stefanwehrmeyer.com',
     packages=find_packages(),
