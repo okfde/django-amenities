@@ -69,6 +69,10 @@ def node_has_tags(basic, tags):
     return False
 
 
+def clean(value):
+    return value.replace('\n', ' ').strip()
+
+
 def get_data_for_node(elem, version=0, topics=None, category_func=None):
     data = {
         x.attrib['k']: x.attrib['v']
@@ -81,7 +85,7 @@ def get_data_for_node(elem, version=0, topics=None, category_func=None):
     )
     last_update = pytz.utc.localize(last_update, is_dst=None)
     basic = {
-        k.replace('addr:', ''): v for k, v in data.items()
+        k.replace('addr:', ''): clean(v) for k, v in data.items()
         if k in BASIC_TAGS
     }
 
